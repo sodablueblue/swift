@@ -5,30 +5,50 @@
 
 __author__ = 'Sodablueblue'
 
-from Base import *
+from Rule import *
+from common import _SIMPLE, _COMPLEX
 
-class Type(Base):
-	def __init__(self, name, rule):
-		super(Type, self).__init__(name)
+class Type(object):
+	def __init__(self, name, rule, childern = None):
+		self.name = name
 		self.rule = rule
-		self.values = None
+		if isinstance(self.rule, Restriction):
+			self.simOrCom = _SIMPLE
+		elif isinstance(self.rule, Combinition):
+			self.simOrCom = _COMPLEX
+		else:
+			raise BaseException('Type ', self.name, ': rule isn\'t a instance of Type')
+		self.children = children
 
-	def setValue(self, values):
-		self.values = values
+	def inflat(self):
+		if self.simOrCom == _COMPLEX and len(self.children) > 0:
+			resArr = list()
+			for child in self.children:
+				maxv = 'maxOccurs' in child if child.maxOccurs else 1
+				minv = 'minOccurs' in child if child.minOccurs else 1
+				try:
+					resArr.append = Element(child.name, child.type, maxv, minv)
+				except BaseException(e):
+					raise BaseException('Type ', self.name, ' -> ', e)
+			self.children = resArr
+			return self.children
+		else:
+			return None
+
 
 	def render(self):
-		return '<tr><td>' + self.name + '</td><td>' + self.condition.name + '</td><td>' + self.condition.rules + '</td></tr>'
+		return '<tr><td>' + self.name + '</td><td>' + self.rule.name + '</td><td>' + self.rule.render + '</td></tr>'
 
-	def check(self):
-		rules = [
-		
-		for value in self.values:
-			rules = rules + value.rule
-
+	def check(self, values):
 		try:
-			for rule in self.rules:
-				rule.check(self.value)
-		except BaseException as e:
-			print('except: ', self.__class__._name__, 'check error. ', e) 
-		finally:
-			pass
+			self.rule.check(values, children)
+
+		except BaseException(e):
+			raise BaseException('Type ', self.name, ' -> ', e)
+
+	def encode(self):
+		pass
+
+# if __name__ == '__main__':
+# 	t = Type('name', Restriction())
+# 	print(t.simOrCom)
