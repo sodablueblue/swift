@@ -26,15 +26,12 @@ class Restriction(Rule):
 	def check(self, values, bench = None):
 		try:
 			self._checkCriteria(values)
-		except BaseException(e):
-			raise BaseException('Restriction ', self.__class__.__name__, ': ', e)
+		except BaseException as e:
+			raise BaseException('Restriction ', self.__class__.__name__, ': ', str(e))
 
 class Combination(Rule):
 	def __init__(self, type, criteria):
-		super(Restriction, self).__init__(type, criteria)
-
-	def _checkCriteria(self, value):
-		pass
+		super(Combination, self).__init__(type, criteria)
 
 	def _checkbench(self, value, bench):
 		pass
@@ -44,7 +41,6 @@ class Combination(Rule):
 
 	def check(self, values, bench):
 		try:
-			self._checkCriteria(values)
 			self._checkBench(values, bench)
-		except BaseException(e):
-			raise BaseException('Combination ', self.__class__.name__,': ', e)
+		except BaseException as e:
+			raise BaseException('Combination ', self.__class__.name__,': ', str(e))

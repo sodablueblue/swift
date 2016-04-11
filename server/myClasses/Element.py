@@ -25,16 +25,22 @@ class Element(object):
 		try:
 			self.values = self.type.inflat()
 			self.inflatReady = True
-		except BaseException(e):
+		except BaseException as e:
 			self.inflatReady = False
-			raise BaseException('Element ', self.name, ' -> ' + e)
+			raise BaseException('Element ', self.name, ' -> ' + str(e))
 
+	''' 
+	@param values:
+		{'name': 'xxx', 'value': 'xxx'}
+	or
+		[{'name': 'xxx', 'value': 'xxx'}, {'name': 'yyy', 'value': 'yyy}]
+	'''
 	def setValue(self, values):
 		if not self.inflatReady:
 			self.inflat()
 
 		if self.type.simOrCom == _SIMPLE:
-			self.values = values
+			self.values = values.value
 		else:
 			for index, value in enumerate(self.values):
 				value.setValue(values[index])
@@ -57,8 +63,8 @@ class Element(object):
 
 		try:
 			self.type.check(values)
-		except BaseException(e):
-			raise 'Element name=' + self.name + ' -> ' + e
+		except BaseException as e:
+			raise 'Element name=' + self.name + ' -> ' + str(e)
 
 	def rule(self, value):
 		return {'name': self.name, 'maxOccurs': self.maxOccurs, 'minOccurs': self.minOccurs}

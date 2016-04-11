@@ -5,12 +5,11 @@
 
 __author__ = 'Sodablueblue'
 
-from Extension import *
+from Rule import *
 
-class SimpleContent(object):
+class SimpleContent(Combination):
 
-	def __init__(self, extension):
-		self.extension = extension
+	def __init__(self, criteria):
+		super(Sequence, self).__init__('Sequence', criteria)
 
-	def check(self):
-		self.extension.check()
+	#TODO:
