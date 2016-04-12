@@ -11,20 +11,24 @@ import re
 class Pattern(Restriction):
 
 	def __init__(self, criteria):
-		super(Pattern, self).__init__('String', criteria)
+		super(Pattern, self).__init__('String Pattern', criteria)
 
 		if not 'pattern' in criteria:
-			raise BaseException('Pattern Restriction: Params error')
+			raise BaseException('Params error \'Element.' + value + '\'')
 		
 		self.pattern = criteria['pattern']
 
 	def _checkCriteria(self, value):
 		if not re.match(self.pattern, value):
-			raise BaseException('Pattern Restriction: String not match pattern')
+			raise BaseException('Not match pattern \'Element.' + value + '\'')
 
 	def _toHtml(self):
-		return 'pattern = ' + self.pattern
+		return '(pattern=/' + self.pattern + '/)'
 
 if __name__ == '__main__':
-	p = Pattern({'pattern' : '^[a-zA-Z0-9]+$'})
-	p.check('abc')	
+	try:
+		p = Pattern({'pattern' : '^[a-zA-Z0-9]+$'})
+		print(p.render())
+		p.check('abccc---')	
+	except BaseException as e:
+		print(e)	

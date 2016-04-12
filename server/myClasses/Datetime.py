@@ -16,9 +16,15 @@ class Datetime(Restriction):
 
 	def _checkCriteria(self, value):
 		if not re.match(self.pattern, str(value).strip()):
-			raise BaseException('Datetime Restriction: Datetime format error')
+			raise BaseException('Format error \'Element.' + value + '\'')
 
+	def _toHtml(self):
+		return ''
 
 if __name__ == '__main__':
-	d = Datetime()
-	d.check('2015-2-4 10:03:23')
+	try:
+		d = Datetime()
+		print(d.render())
+		d.check('2015-2.4 10:03:23')
+	except BaseException as e:
+		print(e)

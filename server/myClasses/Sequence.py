@@ -12,23 +12,57 @@ class Sequence(Combination):
 	def __init__(self, criteria):
 		super(Sequence, self).__init__('Sequence', criteria)
 
-	def _checkBench(values, bench):
-		if len(values) > len(bench):
-			raise BaseException('Sequence: Beyond sequence')
+	def _checkCriteria(self, values):
+		length, listVal = len(values), list()
+		for index, val in enumerate(values):
+			name = val.name
+			count = 1
 
-		i, j = 0, 0
-		while j < len(bench):
-			if i < len(values) and values[i].name == bench[j].name:
-				i, j = i + 1, j + 1
-				continue
-			elif bench[j].minOccurs == 0:
-				j = j + 1
+			if index < length - 1 and val.name == values[index + 1].name:
+				count += 1
 				continue
 			else:
-				raise BaseException('Sequence: Sequence not equal')
+				listVal.append({'name': name, 'occurs': count})
 
+		if len(listVal) > len(self.criteria):
+			raise BaseException('Invalid data \'Element.' + listVal[len(listVal) - 1]['name'] + '\'')
+
+		for index, cri in enumerate(self.criteria):
+			if listVal[index]['name'] != cri['name']:
+				raise BaseException('Invalid data \'Element.' + listVal[index]['name'] + '\'')
+			if listVal[index]['occurs'] < (cri['minOccurs'] if 'minOccurs' in cri else 1) or listVal[index]['occurs'] > (cri['maxOccurs'] if 'maxOccurs' in cri else 1):
+				raise BaseException('Invalid data \'Element.' + listVal[i]['name'] + '\'')
+				
 	def _toHtml(self):
-		resVal = 'Sequence: ('
+		resVal = '('
 		for cri in self.criteria:
-			resVal += cri.name + ', '
+			max = cri['maxOccurs'] if 'maxOccurs' in cri else 1
+			min = cri['minOccurs'] if 'minOccurs' in cri else 1
+			resVal += cri['name'] + '{' + str(max) + '~' + str(min) + '}, '
 		return resVal[:-2:] + ')'
+
+
+if __name__ == '__main__':
+	from Element import *
+	from Type import *
+
+	try:
+		c = Sequence(
+			[
+				{'name': "AnyBIC", 'type':"AnyBICIdentifier", 'maxOccurs' : 2, 'minOccurs': 1},
+	            {'name':"PrtryId",'type':"GenericIdentification29", 'minOccurs': 0},
+	            {'name':"NmAndAdr", 'type':"NameAndAddress6", 'maxOccurs': 2, 'minOccurs' : 0}
+	        ])
+		print(c.render())
+
+		c.check(
+			[ 
+				Element('AnyBIC', Type('test', c)),
+				# Element('AnyBIC', Type('test', c)),
+				Element('PrtryId', Type('test', c)),
+				Element('NmAndAdr', Type('test', c)),
+				Element('NmAndAdr', Type('test', c)),
+				Element('AnyBIC', Type('test', c))
+			])
+	except BaseException as e:
+		print(e)

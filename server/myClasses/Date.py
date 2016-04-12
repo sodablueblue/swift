@@ -16,11 +16,17 @@ class Date(Restriction):
 
 	def _checkCriteria(self, value):
 		if not re.match(self.pattern, str(value)):
-			raise BaseException('Date Restriction: Date format error')
+			raise BaseException('Format error \'Element.' + value + '\'')
 
 	def _toHtml(self):
-		return 'Date type'
+		return ''
 
 if __name__ == '__main__':
-	d = Date()
-	d.check('2013-12-1')
+	try:
+		d = Date()
+
+		print(d.render())
+		
+		d.check('2013.12-1')
+	except BaseException as e:
+		print(e)

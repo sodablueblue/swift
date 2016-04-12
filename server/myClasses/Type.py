@@ -5,7 +5,8 @@
 
 __author__ = 'Sodablueblue'
 
-from Rule import *
+from Rule import Restriction
+from Rule import Combination
 from common import _SIMPLE, _COMPLEX
 
 class Type(object):
@@ -14,10 +15,10 @@ class Type(object):
 		self.rule = rule
 		if isinstance(self.rule, Restriction):
 			self.simOrCom = _SIMPLE
-		elif isinstance(self.rule, Combinition):
+		elif isinstance(self.rule, Combination):
 			self.simOrCom = _COMPLEX
 		else:
-			raise BaseException('Type ', self.name, ': rule isn\'t a instance of Type')
+			raise BaseException('Type ' + self.name + ': rule isn\'t a instance of Type. It\'s ' + self.rule.__class__.__name__)
 
 	def inflat(self):
 		if self.simOrCom == _COMPLEX and len(self.children) > 0:

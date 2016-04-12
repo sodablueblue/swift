@@ -9,25 +9,29 @@ from Rule import *
 
 class Enum(Restriction):
 	def __init__(self, criteria):
-		super(Enum, self).__init__('String', criteria)
+		super(Enum, self).__init__('String Enum', criteria)
 
 		if not 'enums' in criteria:
-			raise BaseException('Enum Restriction: Params error')
+			raise BaseException('Params error')
 		
 		self.enums = criteria['enums']
 
 	def _checkCriteria(self, value):
 		if not value in self.enums:
-			raise BaseException('Enum Restriction: String not in emuns')
+			raise BaseException('Not in emuns \'Elment.' + value + '\'')
 
 	def _toHtml(self):
-		resVal = 'enums: ('
+		resVal = '('
 		for enum in self.enums:
 			resVal += enum + ', '
 		resVal = resVal[: -2:] + ')'
 		return resVal
 
+
 if __name__ == '__main__':
-	e = Enum({'enums': ('red', 'blue', 'green')})
-	e.check('red')
-	print(e._toHtml())
+	try:
+		e = Enum({'enums': ('red', 'blue', 'green')})
+		print(e.render())
+		e.check('r')
+	except BaseException as e:
+		print(e)

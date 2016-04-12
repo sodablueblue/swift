@@ -12,15 +12,15 @@ class Decimal(Restriction):
 		super(Decimal, self).__init__('Decimal', criteria)
 
 		if not 'fractionDigits' in criteria or not 'totalDigits' in criteria:
-			raise BaseException('Decimal Restriction: Params error')
+			raise BaseException('Params error')
 		
 		self.fractionDigits = criteria['fractionDigits']
 		self.totalDigits = criteria['totalDigits']
-		self.minInclusive = 'minInclusive' in criteria if criteria['minInclusive'] else -float('Inf')
+		self.minInclusive =  criteria['minInclusive'] if 'minInclusive' in criteria else -float('Inf')
 
 	def _checkCriteria(self, value):
 		if value < self.minInclusive:
-			raise BaseException('Decimal Restriction: Less than minInclusive')
+			raise BaseException('Less than minInclusive \'Element.' + str(value) + '\'')
 
 		else:
 			strVal = str(value)
@@ -29,13 +29,13 @@ class Decimal(Restriction):
 
 			if '.' in strVal:
 				if self.totalDigits != len(strVal) - 1 or self.fractionDigits != len(strVal[strVal.index('.')]):
-					raise BaseException('Decimal Restriction: Incorret total digits')
+					raise BaseException('Incorret total digits \'Element.' + str(value) + '\'')
 			else:
 				if self.fractionDigits != 0 or self.totalDigits != len(strVal):
-					raise BaseException('Decimal Restriction: Incorrect fraction digits')
+					raise BaseException('Incorrect fraction digits \'Element.' + str(value) + '\'')
 
 	def _toHtml(self):
-		return 'fractionDigits = ' + self.fractionDigits + ', totalDigits = ' + self.totalDigits + ', minInclusive = ' + self.minInclusive
+		return '(fractionDigits=' + str(self.fractionDigits) + ', totalDigits=' + str(self.totalDigits) + ', minInclusive=' + str(self.minInclusive) + ')'
 
 
 if __name__ == '__main__':
@@ -45,7 +45,8 @@ if __name__ == '__main__':
 		# d.check(12)
 		# d.check(12.4)
 
-		d = Decimal({'fractionDigits': 1, 'totalDigits': 3, 'minInclusive': -9})
+		d = Decimal({'fractionDigits': 1, 'totalDigits': 3, 'minInclusive': 9})
+		print(d.render())
 		d.check(-10)
 	except BaseException as e:
 		print(str(e))
